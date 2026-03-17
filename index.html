@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,18 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; width: 100%; transition: background-color 0.3s ease; }
+        html { overflow-x: hidden; }
         .medical-gradient { background: linear-gradient(135deg, #0d9488 0%, #1e40af 100%); }
         
-        /* Floating Animation */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
         .float-icon { animation: float 3s ease-in-out infinite; }
 
-        /* Pulse for Floating Call Button */
         @keyframes pulse-ring {
             0% { transform: scale(0.33); opacity: 1; }
             80%, 100% { opacity: 0; }
@@ -31,46 +36,45 @@
             animation: pulse-ring 1.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
         }
 
-        /* Glassmorphism for Nav */
-        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); transition: all 0.3s; }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.9); border-bottom-color: rgba(255,255,255,0.1); }
 
         .service-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        
         #nav-links.active { display: flex !important; }
 
         .logo-symbol {
-            width: 56px; height: 56px; border-radius: 50%;
+            width: 45px; height: 45px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); 
             overflow: hidden; background: white;
         }
+        @media (min-width: 1024px) { .logo-symbol { width: 56px; height: 56px; } }
         .logo-symbol img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Chatbot Styles */
         #chatbot-window { transition: all 0.3s ease-in-out; transform: translateY(20px); opacity: 0; pointer-events: none; }
         #chatbot-window.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
         .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 18px; margin-bottom: 8px; font-size: 14px; }
         .bot-msg { background: #f1f5f9; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 4px; }
         .user-msg { background: #0d9488; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .dark .bot-msg { background: #1e293b; color: #f1f5f9; }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #0d9488; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 leading-normal">
+<body class="bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 leading-normal transition-colors duration-300">
 
-    <a href="tel:+919369756224" class="lg:hidden fixed bottom-6 left-6 w-16 h-16 bg-red-600 text-white rounded-full flex flex-col items-center justify-center z-[100] shadow-2xl pulse-btn border-2 border-white">
-        <i class="fas fa-phone-alt text-xl"></i>
-        <span class="text-[7px] font-bold uppercase mt-1">Emergency</span>
+    <a href="tel:+919369756224" class="lg:hidden fixed bottom-6 left-6 w-14 h-14 bg-red-600 text-white rounded-full flex flex-col items-center justify-center z-[100] shadow-2xl pulse-btn border-2 border-white">
+        <i class="fas fa-phone-alt text-lg"></i>
+        <span class="text-[6px] font-bold uppercase mt-1">Emergency</span>
     </a>
 
     <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center z-[100] shadow-2xl hover:scale-110 transition">
         <i class="fas fa-comment-medical text-2xl"></i>
     </button>
 
-    <div id="chatbot-window" class="fixed bottom-24 right-6 w-[350px] max-w-[90vw] h-[450px] bg-white rounded-3xl shadow-2xl z-[101] flex flex-col overflow-hidden border border-gray-100">
+    <div id="chatbot-window" class="fixed bottom-24 right-6 w-[320px] md:w-[350px] max-w-[90vw] h-[450px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl z-[101] flex flex-col overflow-hidden border border-gray-100 dark:border-slate-800">
         <div class="bg-blue-900 p-4 text-white flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <i class="fas fa-robot"></i>
@@ -81,27 +85,35 @@
         <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col">
             <div class="chat-bubble bot-msg">Namaste Pathak Ji! Main Flexora AI assistant hoon. Aap mujhse kisi bhi health issue ke baare mein puch sakte hain.</div>
         </div>
-        <div class="p-3 border-t flex gap-2">
-            <input type="text" id="chat-input" placeholder="Apna sawal likhein..." class="flex-1 px-4 py-2 bg-gray-100 rounded-full outline-none text-sm focus:ring-1 focus:ring-teal-500">
+        <div class="p-3 border-t dark:border-slate-800 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Apna sawal likhein..." class="flex-1 px-4 py-2 bg-gray-100 dark:bg-slate-800 dark:text-white rounded-full outline-none text-sm focus:ring-1 focus:ring-teal-500">
             <button onclick="sendChat()" class="bg-teal-600 text-white w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-paper-plane text-xs"></i></button>
         </div>
     </div>
 
-    <nav class="glass-nav border-b border-gray-100 sticky top-0 z-50 px-6 py-4 shadow-sm">
+    <nav class="glass-nav border-b border-gray-100 sticky top-0 z-50 px-4 md:px-6 py-4 shadow-sm">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 group cursor-pointer">
                 <div class="logo-symbol">
                     <img src="https://lh3.googleusercontent.com/d/1-rP5X1jhMSLK97dPYm9W5XwK3TpKqU3D" alt="Flexora Logo">
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-xl font-black text-blue-900 tracking-tight leading-none uppercase italic">Flexora</span>
-                    <span class="text-[10px] font-bold text-teal-600 tracking-[0.2em] uppercase">Physiotherapy</span>
+                    <span class="text-lg md:text-xl font-black text-blue-900 dark:text-white tracking-tight leading-none uppercase italic">Flexora</span>
+                    <span class="text-[8px] md:text-[10px] font-bold text-teal-600 tracking-[0.2em] uppercase">Physiotherapy</span>
                 </div>
             </div>
 
-            <button id="menu-btn" class="lg:hidden text-blue-900 focus:outline-none"><i class="fas fa-bars text-2xl" id="menu-icon"></i></button>
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col items-center">
+                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-blue-900 dark:text-teal-400 transition hover:scale-110">
+                        <i id="theme-icon" class="fas fa-moon"></i>
+                    </button>
+                    <span class="text-[8px] font-bold uppercase mt-1 dark:text-teal-400 text-blue-900">Mode</span>
+                </div>
+                <button id="menu-btn" class="lg:hidden text-blue-900 dark:text-white focus:outline-none"><i class="fas fa-bars text-2xl" id="menu-icon"></i></button>
+            </div>
 
-            <div id="nav-links" class="hidden absolute top-full left-0 w-full bg-white border-b flex-col p-6 space-y-4 shadow-xl lg:static lg:w-auto lg:flex lg:flex-row lg:space-y-0 lg:space-x-8 lg:p-0 lg:bg-transparent lg:border-none font-bold text-gray-600">
+            <div id="nav-links" class="hidden absolute top-full left-0 w-full bg-white dark:bg-slate-950 border-b dark:border-slate-800 flex-col p-6 space-y-4 shadow-xl lg:static lg:w-auto lg:flex lg:flex-row lg:space-y-0 lg:space-x-8 lg:p-0 lg:bg-transparent lg:border-none font-bold text-gray-600 dark:text-gray-300">
                 <a href="#home" class="hover:text-teal-600 transition" onclick="toggleMenu()">Home</a>
                 <a href="#extended-about" class="hover:text-teal-600 transition" onclick="toggleMenu()">Clinical Profile</a>
                 <a href="#conditions" class="hover:text-teal-600 transition" onclick="toggleMenu()">Services</a>
@@ -113,13 +125,13 @@
         </div>
     </nav>
 
-    <header id="home" class="medical-gradient text-white py-32 px-6 text-center relative overflow-hidden">
+    <header id="home" class="medical-gradient text-white py-24 md:py-32 px-6 text-center relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-            <i class="fas fa-dna absolute top-10 left-10 text-8xl rotate-12"></i>
-            <i class="fas fa-heartbeat absolute bottom-20 right-20 text-9xl -rotate-12"></i>
+            <i class="fas fa-dna absolute top-10 left-10 text-6xl md:text-8xl rotate-12"></i>
+            <i class="fas fa-heartbeat absolute bottom-20 right-20 text-7xl md:text-9xl -rotate-12"></i>
         </div>
         <div class="max-w-5xl mx-auto relative z-10" data-aos="fade-up">
-            <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-tight italic">Expert Physiotherapy Care for Pain-Free Living</h1>
+            <h1 class="text-4xl md:text-6xl lg:text-8xl font-black mb-6 tracking-tighter leading-tight italic">Expert Physiotherapy Care for Pain-Free Living</h1>
             <p class="text-xl md:text-3xl font-light mb-12 text-teal-50 italic opacity-90">Precision Assessment • Movement Science • Neuro Plasticity</p>
             <div class="flex flex-wrap justify-center gap-6">
                 <a href="#appointment" class="bg-white text-blue-900 px-10 py-5 rounded-2xl font-black shadow-2xl flex items-center transition hover:scale-105">
@@ -132,38 +144,38 @@
         </div>
     </header>
 
-    <section id="about" class="py-24 max-w-7xl mx-auto px-6 border-b border-gray-100 overflow-hidden">
+    <section id="about" class="py-16 md:py-24 max-w-7xl mx-auto px-6 border-b border-gray-100 dark:border-slate-900 overflow-hidden">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
             <div class="lg:w-1/3 w-full" data-aos="fade-right">
                 <div class="relative">
-                    <div class="absolute -top-4 -left-4 w-24 h-24 bg-teal-100 rounded-full z-0 opacity-50"></div>
-                    <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" class="rounded-3xl w-full bg-white p-4 shadow-2xl border border-gray-100 relative z-10" alt="Dr. Divyansh Pathak">
+                    <div class="absolute -top-4 -left-4 w-24 h-24 bg-teal-100 dark:bg-teal-900 rounded-full z-0 opacity-50"></div>
+                    <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" class="rounded-3xl w-full bg-white p-4 shadow-2xl border border-gray-100 dark:border-slate-800 relative z-10" alt="Dr. Divyansh Pathak">
                     <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[80%] bg-blue-900 text-white p-6 rounded-2xl shadow-2xl text-center z-20 border-b-4 border-teal-500">
                         <p class="font-black text-teal-400 text-lg uppercase tracking-widest italic leading-tight">Dr. Divyansh Pathak (PT)</p>
-                        <p class="text-xs opacity-80 mt-1 uppercase font-bold">Consultant Physiotherapist</p>
+                        <p class="text-[10px] md:text-xs opacity-80 mt-1 uppercase font-bold">Consultant Physiotherapist</p>
                     </div>
                 </div>
             </div>
             <div class="lg:w-2/3" data-aos="fade-left">
-                <h2 class="text-5xl font-black text-blue-900 mb-8 uppercase tracking-tighter italic">Expert Rehabilitation</h2>
-                <div class="bg-teal-50 border-l-8 border-teal-500 p-8 rounded-3xl mb-10 shadow-sm">
-                    <p class="text-teal-700 font-black mb-1 uppercase text-xs tracking-[0.3em]">📍 University Affiliated Specialist</p>
-                    <p class="text-2xl font-bold text-slate-800 italic leading-snug">Sunderpur near RVC, Varanasi, UP - 221005</p>
+                <h2 class="text-3xl md:text-5xl font-black text-blue-900 dark:text-white mb-8 uppercase tracking-tighter italic">Expert Rehabilitation</h2>
+                <div class="bg-teal-50 dark:bg-slate-900 border-l-8 border-teal-500 p-8 rounded-3xl mb-10 shadow-sm">
+                    <p class="text-teal-700 dark:text-teal-400 font-black mb-1 uppercase text-xs tracking-[0.3em]">📍 University Affiliated Specialist</p>
+                    <p class="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-200 italic leading-snug">Sunderpur near RVC, Varanasi, UP - 221005</p>
                 </div>
-                <div class="text-gray-600 space-y-6 text-xl leading-relaxed italic">
+                <div class="text-gray-600 dark:text-gray-400 space-y-6 text-xl leading-relaxed italic">
                     <p>Known for compassionate care and modern clinical protocols, Dr. Divyansh specializes in neuro-plasticity and movement correction. We don't just treat symptoms; we rebuild functional independence.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 not-italic">
-                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-50"><i class="fas fa-microscope text-teal-600 text-2xl"></i> <span class="font-bold">Precision Diagnosis</span></div>
-                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-50"><i class="fas fa-dumbbell text-teal-600 text-2xl"></i> <span class="font-bold">Functional Training</span></div>
+                        <div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-50 dark:border-slate-800"><i class="fas fa-microscope text-teal-600 text-2xl"></i> <span class="font-bold dark:text-gray-200">Precision Diagnosis</span></div>
+                        <div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-50 dark:border-slate-800"><i class="fas fa-dumbbell text-teal-600 text-2xl"></i> <span class="font-bold dark:text-gray-200">Functional Training</span></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="conditions" class="py-24 bg-slate-900 text-white px-6">
+    <section id="conditions" class="py-24 bg-slate-900 dark:bg-black text-white px-6">
         <div class="max-w-7xl mx-auto">
-            <h3 class="text-4xl font-black text-center mb-20 uppercase tracking-widest italic" data-aos="fade-down">The Path to Pain-Free Life</h3>
+            <h3 class="text-3xl md:text-4xl font-black text-center mb-20 uppercase tracking-widest italic" data-aos="fade-down">The Path to Pain-Free Life</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                 <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 service-card text-center" data-aos="zoom-in">
                     <i class="fas fa-bone text-teal-400 text-5xl mb-6 float-icon"></i>
@@ -182,40 +194,40 @@
                 </div>
                 <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 service-card text-center" data-aos="zoom-in" data-aos-delay="300">
                     <i class="fas fa-walking text-teal-400 text-5xl mb-6 float-icon delay-3"></i>
-                    <h4 class="text-2xl font-black mb-4">Geriatric</h4>
-                    <p class="text-slate-400 font-medium">Aging well with mobility care and fall prevention.</p>
+                    <h4 class="text-xl md:text-2xl font-black mb-4">Geriatric</h4>
+                    <p class="text-slate-400 font-medium text-sm md:text-base">Aging well with mobility care and fall prevention.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="appointment" class="py-24 px-6 bg-slate-100">
-        <div class="max-w-6xl mx-auto bg-white rounded-[3rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-gray-100" data-aos="zoom-out">
-            <div class="bg-blue-900 text-white p-16 md:w-1/2 flex flex-col justify-center border-r border-blue-800 relative overflow-hidden">
+    <section id="appointment" class="py-16 md:py-24 px-6 bg-slate-100 dark:bg-slate-950">
+        <div class="max-w-6xl mx-auto bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-gray-100 dark:border-slate-800" data-aos="zoom-out">
+            <div class="bg-blue-900 text-white p-12 md:p-16 md:w-1/2 flex flex-col justify-center border-r border-blue-800 relative overflow-hidden">
                 <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/5 rounded-full"></div>
-                <h3 class="text-4xl font-black mb-8 border-b-4 border-teal-500 pb-4 inline-block italic">Clinic Access</h3>
-                <div class="space-y-8 text-lg font-medium">
+                <h3 class="text-3xl md:text-4xl font-black mb-8 border-b-4 border-teal-500 pb-4 inline-block italic">Clinic Access</h3>
+                <div class="space-y-8 text-base md:text-lg font-medium">
                     <p class="flex items-center gap-5"><i class="fas fa-envelope text-teal-400 text-2xl"></i> drdivyanshp@gmail.com</p>
                     <p class="flex items-center gap-5"><i class="fas fa-phone-alt text-teal-400 text-2xl wa-pulse"></i> +91 9369756224</p>
                     <div class="pt-8 border-t border-white/10">
                         <p class="text-teal-400 font-black mb-4 uppercase text-sm tracking-widest">Operating Timings</p>
                         <p class="mb-2">📅 Mon-Fri: 10AM - 5PM</p>
                         <p class="mb-2">📅 Sat: 12PM - 5PM</p>
-                        <p class="text-yellow-400 font-bold italic">Sunday: Strictly Appointment Only</p>
+                        <p class="text-yellow-400 font-bold italic">Sunday: Appointment Only</p>
                     </div>
                 </div>
             </div>
 
-            <div class="p-16 md:w-1/2">
-                <h3 class="text-4xl font-black mb-2 text-blue-900 italic uppercase">Book Appointment</h3>
-                <p class="text-slate-500 mb-10 font-bold italic">Start your journey to recovery today.</p>
+            <div class="p-8 md:p-16 md:w-1/2">
+                <h3 class="text-3xl md:text-4xl font-black mb-2 text-blue-900 dark:text-teal-400 italic uppercase">Book Appointment</h3>
+                <p class="text-slate-500 mb-10 font-bold italic text-sm">Start your journey to recovery today.</p>
                 <form id="appointmentForm" action="https://formspree.io/f/mnjgbdgo" method="POST" class="space-y-6">
-                    <div class="grid grid-cols-2 gap-6">
-                        <input type="text" id="fname" name="First_Name" placeholder="First Name" required class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-bold">
-                        <input type="text" id="lname" name="Last_Name" placeholder="Last Name" required class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-bold">
+                    <div class="grid grid-cols-2 gap-4 md:gap-6">
+                        <input type="text" id="fname" name="First_Name" placeholder="First Name" required class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-bold text-sm">
+                        <input type="text" id="lname" name="Last_Name" placeholder="Last Name" required class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-bold text-sm">
                     </div>
-                    <input type="tel" id="mobile" name="Mobile" placeholder="Mobile Number" required pattern="[0-9]{10}" maxlength="10" class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-bold">
-                    <select id="pService" name="Service" required class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-black text-gray-700">
+                    <input type="tel" id="mobile" name="Mobile" placeholder="Mobile Number" required pattern="[0-9]{10}" maxlength="10" class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-bold text-sm">
+                    <select id="pService" name="Service" required class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-black text-gray-700 dark:text-gray-300 text-sm">
                         <option value="" disabled selected>Select Clinical Service</option>
                         <option>Orthopedic Physiotherapy</option>
                         <option>Sports Injury Rehabilitation</option>
@@ -229,30 +241,30 @@
                         <option>Posture Correction & Ergonomics</option>
                         <option>Home Visit Physiotherapy</option>
                     </select>
-                    <input type="date" id="pDate" name="Date" required class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-bold">
-                    <textarea id="pDesc" name="Description" rows="3" placeholder="Describe your condition (Optional)" class="w-full p-5 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-teal-500 transition font-bold"></textarea>
+                    <input type="date" id="pDate" name="Date" required class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-bold text-sm">
+                    <textarea id="pDesc" name="Description" rows="3" placeholder="Describe your condition (Optional)" class="w-full p-4 md:p-5 bg-gray-50 dark:bg-slate-800 dark:text-white border-2 border-gray-100 dark:border-slate-700 rounded-2xl outline-none focus:border-teal-500 transition font-bold text-sm"></textarea>
                     
-                    <button type="submit" onclick="notifyFlexoraWA(event)" class="w-full bg-teal-600 text-white py-5 rounded-2xl font-black text-2xl hover:bg-teal-700 transition shadow-2xl uppercase tracking-tighter active:scale-95 wa-pulse">Confirm Session</button>
+                    <button type="submit" onclick="notifyFlexoraWA(event)" class="w-full bg-teal-600 text-white py-5 rounded-2xl font-black text-xl md:text-2xl hover:bg-teal-700 transition shadow-2xl uppercase tracking-tighter active:scale-95 wa-pulse">Confirm Session</button>
                 </form>
             </div>
         </div>
     </section>
 
-    <section id="extended-about" class="py-24 bg-white px-6 border-b border-gray-100">
+    <section id="extended-about" class="py-24 bg-white dark:bg-slate-950 px-6 border-b border-gray-100 dark:border-slate-900">
         <div class="max-w-5xl mx-auto">
-            <h2 class="text-4xl font-black text-blue-900 mb-2 italic uppercase tracking-tight" data-aos="fade-right">Dr. Divyansh Pathak (PT)</h2>
+            <h2 class="text-3xl md:text-4xl font-black text-blue-900 dark:text-white mb-2 italic uppercase tracking-tight" data-aos="fade-right">Dr. Divyansh Pathak (PT)</h2>
             <p class="text-teal-600 font-bold text-xl mb-10">Neuro Rehabilitation | Movement Science | Pain & Performance Specialist</p>
             
-            <div class="prose max-w-none text-gray-700 space-y-6 text-lg leading-relaxed mb-16" data-aos="fade-up">
+            <div class="prose max-w-none text-gray-700 dark:text-gray-400 space-y-6 text-lg md:text-xl leading-relaxed mb-16" data-aos="fade-up">
                 <p>I am Dr. Divyansh Pathak, a Consultant Physiotherapist specializing in Neuro Rehabilitation, Sports Injury Recovery, and Advanced Pain & Movement Therapy. My clinical approach is rooted in evidence-based science, precision assessment, and personalized rehabilitation strategies designed to deliver measurable and lasting results.</p>
-                <p>I believe physiotherapy is not just about relieving pain — it is about restoring function, rebuilding confidence, and optimizing human movement. Every treatment plan I design is tailored to the individual, focusing on identifying the root cause of dysfunction rather than merely addressing symptoms.</p>
+                <p>I believe physiotherapy is not just about relieving pain — it is about restoring function, rebuilding confidence, and optimizing human movement.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
-                <div class="bg-gray-50 p-8 rounded-3xl border-l-8 border-teal-500 shadow-sm" data-aos="fade-up">
-                    <h3 class="text-2xl font-black text-blue-900 mb-6 flex items-center gap-3">🧠 Neuro Rehabilitation</h3>
-                    <p class="font-bold mb-4">Recovering from complex neurological conditions, including:</p>
-                    <ul class="space-y-2 text-gray-700 font-semibold">
+                <div class="bg-gray-50 dark:bg-slate-900 p-8 rounded-3xl border-l-8 border-teal-500 shadow-sm" data-aos="fade-up">
+                    <h3 class="text-2xl font-black text-blue-900 dark:text-white mb-6 flex items-center gap-3">🧠 Neuro Rehabilitation</h3>
+                    <p class="font-bold mb-4 dark:text-gray-300">Recovering from complex neurological conditions, including:</p>
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-400 font-semibold">
                         <li>• Stroke Rehabilitation</li>
                         <li>• Parkinson’s Disease</li>
                         <li>• Spinal Cord Injury</li>
@@ -260,10 +272,10 @@
                         <li>• Balance & Gait Training</li>
                     </ul>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-3xl border-l-8 border-blue-600 shadow-sm" data-aos="fade-up" data-aos-delay="200">
-                    <h3 class="text-2xl font-black text-blue-900 mb-6 flex items-center gap-3">⚡ Sports & Performance</h3>
-                    <p class="font-bold mb-4">Structured programs for athletes and active individuals:</p>
-                    <ul class="space-y-2 text-gray-700 font-semibold">
+                <div class="bg-gray-50 dark:bg-slate-900 p-8 rounded-3xl border-l-8 border-blue-600 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-2xl font-black text-blue-900 dark:text-white mb-6 flex items-center gap-3">⚡ Sports & Performance</h3>
+                    <p class="font-bold mb-4 dark:text-gray-300">Structured programs for athletes and active individuals:</p>
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-400 font-semibold">
                         <li>• ACL / PCL Injuries</li>
                         <li>• Ligament Sprains</li>
                         <li>• Post-Surgical Rehab</li>
@@ -287,58 +299,58 @@
             </div>
 
             <div class="text-center" data-aos="zoom-in">
-                <h3 class="text-3xl font-black text-blue-900 mb-8 uppercase italic border-b-4 border-teal-500 inline-block">My Clinical Philosophy</h3>
+                <h3 class="text-3xl md:text-4xl font-black text-blue-900 dark:text-white mb-8 uppercase italic border-b-4 border-teal-500 inline-block">My Clinical Philosophy</h3>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
-                    <div class="p-6 bg-teal-50 rounded-2xl font-bold text-teal-800 text-xs float-icon">Precision Assessment</div>
-                    <div class="p-6 bg-teal-50 rounded-2xl font-bold text-teal-800 text-xs float-icon delay-1">Evidence-Based</div>
-                    <div class="p-6 bg-teal-50 rounded-2xl font-bold text-teal-800 text-xs float-icon delay-2">Personalized Protocols</div>
-                    <div class="p-6 bg-teal-50 rounded-2xl font-bold text-teal-800 text-xs float-icon delay-3">Functional Recovery</div>
-                    <div class="p-6 bg-teal-50 rounded-2xl font-bold text-teal-800 text-xs float-icon delay-4">Patient Education</div>
+                    <div class="p-6 bg-teal-50 dark:bg-slate-900 rounded-2xl font-bold text-teal-800 dark:text-teal-400 text-xs float-icon">Precision Assessment</div>
+                    <div class="p-6 bg-teal-50 dark:bg-slate-900 rounded-2xl font-bold text-teal-800 dark:text-teal-400 text-xs float-icon delay-1">Evidence-Based</div>
+                    <div class="p-6 bg-teal-50 dark:bg-slate-900 rounded-2xl font-bold text-teal-800 dark:text-teal-400 text-xs float-icon delay-2">Personalized Protocols</div>
+                    <div class="p-6 bg-teal-50 dark:bg-slate-900 rounded-2xl font-bold text-teal-800 dark:text-teal-400 text-xs float-icon delay-3">Functional Recovery</div>
+                    <div class="p-6 bg-teal-50 dark:bg-slate-900 rounded-2xl font-bold text-teal-800 dark:text-teal-400 text-xs float-icon delay-4">Patient Education</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="testimonials" class="py-24 bg-teal-50 px-6">
+    <section id="testimonials" class="py-24 bg-teal-50 dark:bg-slate-950 px-6">
         <div class="max-w-7xl mx-auto text-center">
-            <h2 class="text-4xl font-black text-blue-900 mb-4 uppercase italic" data-aos="fade-up">Recovery Success Stories</h2>
+            <h2 class="text-4xl font-black text-blue-900 dark:text-white mb-4 uppercase italic" data-aos="fade-up">Recovery Success Stories</h2>
             <div class="h-1.5 w-20 bg-teal-600 mx-auto rounded-full mb-16"></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                <div class="bg-white p-8 rounded-3xl shadow-xl" data-aos="fade-up">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border dark:border-slate-800" data-aos="fade-up">
                     <div class="flex text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-600 italic font-medium mb-6">"Dr. Divyansh helped me walk properly after my knee surgery. His approach is very modern and effective."</p>
-                    <p class="font-black text-blue-900">Rajesh Sharma</p>
+                    <p class="text-gray-600 dark:text-gray-400 italic font-medium mb-6">"Dr. Divyansh helped me walk properly after my knee surgery. His approach is very modern and effective."</p>
+                    <p class="font-black text-blue-900 dark:text-white">Rajesh Sharma</p>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border dark:border-slate-800" data-aos="fade-up" data-aos-delay="100">
                     <div class="flex text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-600 italic font-medium mb-6">"Excellent neuro rehab for my father's stroke recovery. We saw huge improvements in 2 weeks."</p>
-                    <p class="font-black text-blue-900">Sneha Patel</p>
+                    <p class="text-gray-600 dark:text-gray-400 italic font-medium mb-6">"Excellent neuro rehab for my father's stroke recovery. We saw huge improvements in 2 weeks."</p>
+                    <p class="font-black text-blue-900 dark:text-white">Sneha Patel</p>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl" data-aos="fade-up" data-aos-delay="200">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border dark:border-slate-800" data-aos="fade-up" data-aos-delay="200">
                     <div class="flex text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-gray-600 italic font-medium mb-6">"Best physiotherapist in Varanasi for sciatica pain. No medicine, just pure exercise and science."</p>
-                    <p class="font-black text-blue-900">Ankit Verma</p>
+                    <p class="text-gray-600 dark:text-gray-400 italic font-medium mb-6">"Best physiotherapist in Varanasi for sciatica pain. No medicine, just pure exercise and science."</p>
+                    <p class="font-black text-blue-900 dark:text-white">Ankit Verma</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer id="contact" class="bg-slate-900 text-white pt-24 pb-12 px-6">
+    <footer id="contact" class="bg-slate-900 dark:bg-black text-white pt-24 pb-12 px-6">
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
             <div data-aos="fade-right">
-                <h3 class="text-5xl font-black mb-8 text-teal-400 uppercase italic tracking-tighter">Flexora</h3>
-                <div class="bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 shadow-2xl border-l-[12px] border-teal-500">
+                <h3 class="text-4xl md:text-5xl font-black mb-8 text-teal-400 uppercase italic tracking-tighter">Flexora</h3>
+                <div class="bg-slate-800 dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-700 shadow-2xl border-l-[12px] border-teal-500">
                     <p class="text-teal-400 font-black mb-4 uppercase text-xs tracking-[0.4em] italic">Official Clinic Location</p>
-                    <p class="text-3xl font-bold italic leading-tight mb-8">Sunderpur near RVC, Varanasi, UP - 221005</p>
+                    <p class="text-2xl md:text-3xl font-bold italic leading-tight mb-8">Sunderpur near RVC, Varanasi, UP - 221005</p>
                     <a href="tel:+919369756224" class="inline-flex items-center text-3xl font-black text-teal-400 hover:text-white transition group underline decoration-teal-600 underline-offset-8">
                         <i class="fas fa-phone-alt mr-4 group-hover:rotate-12 transition"></i> 9369756224
                     </a>
                 </div>
             </div>
-            <div class="h-96 rounded-[3rem] overflow-hidden relative border border-slate-700 shadow-2xl group" data-aos="fade-left">
+            <div class="h-64 md:h-96 rounded-[3rem] overflow-hidden relative border border-slate-700 shadow-2xl group" data-aos="fade-left">
                 <a href="https://www.google.com/maps/search/Sunderpur+near+RVC,+Varanasi" target="_blank" class="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center hover:bg-slate-800/20 transition duration-500">
-                    <i class="fas fa-map-marked-alt text-7xl mb-6 text-teal-400 group-hover:scale-110 transition"></i>
-                    <p class="font-black uppercase tracking-[0.3em] text-xl border-2 border-white/20 px-8 py-3 rounded-full">Open in Google Maps</p>
+                    <i class="fas fa-map-marked-alt text-6xl md:text-7xl mb-6 text-teal-400 group-hover:scale-110 transition"></i>
+                    <p class="font-black uppercase tracking-[0.3em] text-sm md:text-xl border-2 border-white/20 px-8 py-3 rounded-full text-center">Open in Google Maps</p>
                 </a>
                 <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover" alt="Varanasi Location">
             </div>
@@ -350,7 +362,30 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true, offset: 100 });
+        AOS.init({ duration: 1000, once: true, offset: 50 });
+
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeIcon.className = 'fas fa-sun';
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeIcon.className = 'fas fa-moon';
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                themeIcon.className = 'fas fa-sun';
+                localStorage.theme = 'dark';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                localStorage.theme = 'light';
+            }
+        });
+
         const menuBtn = document.getElementById('menu-btn');
         const navLinks = document.getElementById('nav-links');
         const menuIcon = document.getElementById('menu-icon');
@@ -364,7 +399,6 @@
 
         menuBtn.addEventListener('click', toggleMenu);
 
-        // Chatbot Functionality
         function toggleChat() {
             document.getElementById('chatbot-window').classList.toggle('open');
         }
@@ -404,7 +438,7 @@
             const mobile = document.getElementById('mobile').value;
             const service = document.getElementById('pService').value;
             const date = document.getElementById('pDate').value;
-            const desc = document.getElementById('pDesc').value || "Not provided"; // Getting description
+            const desc = document.getElementById('pDesc').value || "Not provided";
             
             if (mobile.length !== 10 || isNaN(mobile)) return;
             if(fname && lname && mobile && service && date) {
